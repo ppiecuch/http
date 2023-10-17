@@ -196,7 +196,7 @@ func doreq(method string, url string, headers []string, auth string, realmAuth s
 	return resp, err
 }
 
-func doRealmReq(method string, url headers []string, string, body string, auth string, realmAuth string, authCmd string) (resp *http.Response, err error) {
+func doRealmReq(method string, url string, headers []string, body string, auth string, realmAuth string, authCmd string) (resp *http.Response, err error) {
 	realmAuthStruct := objectify(authCmd)
 	logMsg("Following realm auth to: " + realmAuthStruct.realm)
 
