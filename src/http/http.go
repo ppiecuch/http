@@ -165,7 +165,8 @@ func cleanUrl(dirty string) (clean string, err error) {
 func doreq(method string, url string, headers []string, auth string, realmAuth string, body string) (resp *http.Response, err error) {
 	bodyStr := strings.NewReader(body)
 	request, err := http.NewRequest(method, url, bodyStr)
-	
+
+	logMsg("Add headers to request")
 	for _, h := range headers {
         	parts := strings.SplitN(h, ":", 2)
 	        if len(parts) == 2 {
@@ -188,14 +189,14 @@ func doreq(method string, url string, headers []string, auth string, realmAuth s
 		authCmd := resp.Header.Get("www-authenticate")
 		if authCmd != "" && strings.HasPrefix(authCmd, "Bearer") {
 			authParts := strings.Fields(authCmd)
-			return doRealmReq(method, url, body, auth, realmAuth, authParts[1])
+			return doRealmReq(method, url, headers, body, auth, realmAuth, authParts[1])
 		}
 	}
 
 	return resp, err
 }
 
-func doRealmReq(method string, url string, body string, auth string, realmAuth string, authCmd string) (resp *http.Response, err error) {
+func doRealmReq(method string, url headers []string, string, body string, auth string, realmAuth string, authCmd string) (resp *http.Response, err error) {
 	realmAuthStruct := objectify(authCmd)
 	logMsg("Following realm auth to: " + realmAuthStruct.realm)
 
@@ -212,6 +213,12 @@ func doRealmReq(method string, url string, body string, auth string, realmAuth s
 	bodyStr := strings.NewReader(body)
 	request, err := http.NewRequest(method, url, bodyStr)
 	request.Header.Set("Authorization", "Bearer "+token)
+	for _, h := range headers {
+        	parts := strings.SplitN(h, ":", 2)
+	        if len(parts) == 2 {
+        	    request.Header.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+        	}
+    	}
 
 	// check err
 	client := &http.Client{}
