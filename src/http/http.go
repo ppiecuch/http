@@ -165,6 +165,13 @@ func cleanUrl(dirty string) (clean string, err error) {
 func doreq(method string, url string, headers []string, auth string, realmAuth string, body string) (resp *http.Response, err error) {
 	bodyStr := strings.NewReader(body)
 	request, err := http.NewRequest(method, url, bodyStr)
+	
+	for _, h := range headers {
+        	parts := strings.SplitN(h, ":", 2)
+	        if len(parts) == 2 {
+        	    request.Header.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+        	}
+    	}
 
 	// did we have auth creds?
 	authStruct, err := getAuthStruct(auth)
