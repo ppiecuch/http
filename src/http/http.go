@@ -87,6 +87,9 @@ func main() {
 		headersOnly := c.Bool("I")
 		headers := c.StringSlice("H")
 
+		// let's make it default
+		headers = append(headers, "Accept: application/vnd.docker.distribution.manifest.v2+json")
+
 		setPrintHeaders(showHeaders || headersOnly)
 		setPrintBody(!headersOnly)
 
